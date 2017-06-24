@@ -51,3 +51,5 @@
  
  Finally it adds a proxy to client/package.json
 
+  Oh yeah and the name is totally ripped off
+
