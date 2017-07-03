@@ -12,6 +12,7 @@ const argv        = require('minimist')(process.argv.slice(2));
 const cwd = files.getCurrentDirectoryBase()
 const exec = require('child_process').exec;
 let dest;
+let full = false;
 
 const initialPrompt = () => {
   clear();
@@ -20,6 +21,7 @@ const initialPrompt = () => {
   );
 
   dest = argv._[0];
+  full = argv.full;
 
   if (!dest) {
     console.log(chalk.bold.red('\nrepack <project> no project name specified'))
@@ -51,7 +53,7 @@ const checkRailsVersions = () => {
           {
             type: 'list',
             name: 'cra',
-            message: 'Do you have create react app installed and globally avaialble?',
+            message: 'Do you have create react app installed and globally available?',
             choices: ['Yes', 'No']
 
           }
@@ -99,15 +101,65 @@ const portPrompt = () => {
         if (answer.choice === 'No')
           portPrompt();
         else {
+          checkOptions(answer.port)
           updateClientPackage(answer.port)
-          fin(answer.port)
         }
       });
     } else {
+      checkOptions(answer.port)
       updateClientPackage(answer.port)
-      fin(answer.port)
     }
   });
+}
+
+const checkOptions = (port) => {
+  if (full) {
+    const Gemfile = `${dest}/Gemfile`;
+    let data = fs.readFileSync(Gemfile).toString().split("\n");
+    const index = data.findIndex( line => line === "group :development, :test do" )
+    const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
+    data.splice(index, 0, gems);
+    fs.writeFile(Gemfile, data.join("\n"))
+    exec('bundle', (error, stdout, stderr) => {
+      inquirer.prompt(
+        [
+          {
+             type: 'input',
+             name: 'choice',
+             message: 'What is your Devise Model',
+             default: 'User'
+          }
+        ]
+      ).then( (answer) => {
+        exec(`cd ${dest} && spring stop && bundle exec rails g devise_token_auth:install ${answer.choice} api/auth && bundle exec rake db:drop db:create db:migrate`, () => { 
+          const Model = `${dest}/app/models/${answer.choice.toLowerCase()}.rb`;
+          let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
+          fs.writeFile(Model, data)
+          const config = `${dest}/config/environments/development.rb`
+          let configData = fs.readFileSync(config).toString().split("\n")
+          configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
+          fs.writeFile(config, configData.join("\n"))
+          fin(port) 
+        });
+      })
+    })
+
+    let cmd = `cd ${dest}/client && yarn add redux redux-thunk react-redux react-router-dom axios redux-devise-axios semantic-ui-react semantic-ui-css`
+
+    exec(cmd, () => {
+      let from = `/example/client/`
+      let to = `${dest}/client/`
+      try {
+        fs.copySync(__dirname + from, to)
+      } catch (err) {
+        console.log(err)
+      }
+    })
+
+    exec(`cd ${dest}/client/src && rm -rf App.* *.css *.svg`)
+  } else {
+    fin(port)
+  }
 }
 
 const updateClientPackage = (port) => {
@@ -131,14 +183,7 @@ const installApps = () => {
   const cmd = `rails new -T -d postgresql --api ${dest}`
   console.log('Installing Client...')
   console.log()
-  console.log(chalk.cyan('This part takes a few minutes and a loading bar would actually slow that down so just watch these people juggle instead')) 
-  console.log()
-  console.log()
-  let j1 = `  🤹🏻‍`;
-  let j2 = `  🤹🏻‍♀️`;
-  let j3 = `  🤹🏽‍♀️   🤹🏽‍♂️`
-
-  console.log(`${j1}${j3}${j2}`)
+  console.log(chalk.cyan('This part takes a few minutes and a loading bar would actually slow that down. Please Wait.')) 
 
   exec(cmd, (error, stdout, stderr) => {
     if (!error) {

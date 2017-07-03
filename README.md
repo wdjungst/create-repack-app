@@ -53,3 +53,9 @@
 
   Oh yeah and the name is totally ripped off
 
+  # TODO
+    * Update README with info on --full flag
+    * Transpile
+
+
+ 
