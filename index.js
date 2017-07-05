@@ -131,11 +131,13 @@ const checkOptions = (port) => {
           }
         ]
       ).then( (answer) => {
-        exec(`cd ${dest} && spring stop && bundle exec rails g devise_token_auth:install ${answer.choice} api/auth && bundle exec rake db:drop db:create db:migrate`, () => { 
-          const Model = `${dest}/app/models/${answer.choice.toLowerCase()}.rb`;
+        exec(`cd ${dest} && spring stop && bundle exec rake db:create && bundle exec rails g devise_token_auth:install ${answer.choice} api/auth && bundle exec rake db:migrate`, (err, stdout, stderr) => { 
+          if (err) 
+            console.log('ERR ' + err);
+          const Model = `${cwd}/${dest}/app/models/${answer.choice.toLowerCase()}.rb`;
           let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
           fs.writeFile(Model, data)
-          const config = `${dest}/config/environments/development.rb`
+          const config = `${cwd}/${dest}/config/environments/development.rb`
           let configData = fs.readFileSync(config).toString().split("\n")
           configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
           fs.writeFile(config, configData.join("\n"))
