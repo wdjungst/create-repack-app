@@ -10,7 +10,7 @@ export const registerUser = (email, password, passwordConfirmation, history) => 
         history.push('/');
       })
       .catch( res => {
-        const message = res.response.data.errors.full_messages.join(',');
+        const message = res.response.data.errors.join(',');
         dispatch(setFlash(message, 'error'));
     });
   }
@@ -25,7 +25,7 @@ export const handleLogout = (history) => {
         history.push('/login');
       })
       .catch( res => {
-        const message = res.response.data.errors.full_messages.join(',');
+        const message = res.response.data.errors.join(',');
         dispatch(setFlash(message, 'error'));
       });
     }
@@ -40,7 +40,7 @@ export const handleLogin = (email, password, history) => {
         history.push('/');
       })
       .catch( res => {
-        const message = res.response.data.errors.full_messages.join(',');
+        const message = res.response.data.errors.join(',');
         dispatch(setFlash(message, 'error'));
       })
   }
