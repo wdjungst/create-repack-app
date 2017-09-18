@@ -207,7 +207,7 @@ const copyStart = () => {
   console.log(chalk.bold.green(message))
   console.log(chalk.bold.yellow('Installing project base'))
   try {
-    fs.copySync(__dirname + '/example/base', `${cwd}/${dest}`)
+    fs.copySync(__dirname + '/example/package', `${cwd}/${dest}`)
   } catch (err) {
     console.error(err)
   }
@@ -223,7 +223,7 @@ const copyRootController = () => {
 
 const copyConfig = () => {
   try {
-    fs.copySync(__dirname + '/example/base/config', `${cwd}/${dest}/app/config/`)
+    fs.copySync(__dirname + '/example/base/config', `${cwd}/${dest}/config/`)
   } catch (err) {
     console.error(err)
   }
