@@ -38,7 +38,8 @@
      ```
        <AuthRoute exact path='/register' component={Register} />
      ```
-     If the users aren't logged in, will redirect them to the Register
+     If the users are logged in, will redirect them to the homepage.
+
 
 
 
