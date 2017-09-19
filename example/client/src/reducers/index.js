@@ -1,10 +1,10 @@
-import { combineReducers } from 'redux'
-import user from './user'
-import flash from './flash'
+import { combineReducers } from 'redux';
+import user from './user';
+import flash from './flash';
 
 const rootReducer = combineReducers({
   user,
-  flash,
-})
+  flash
+});
 
-export default rootReducer
+export default rootReducer;

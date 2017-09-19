@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { validateToken } from '../actions/auth';
 
@@ -6,17 +6,13 @@ class FetchUser extends Component {
   state = { loaded: false };
 
   componentDidMount() {
-    let { isAuthenticated, dispatch } = this.props;
-    if(isAuthenticated)
-      this.loaded();
-    else {
-      dispatch(validateToken(this.loaded));
-    }
+    const { isAuthenticated, dispatch } = this.props;
+    if (isAuthenticated) this.loaded();
+    else dispatch(validateToken(this.loaded));
   }
 
   componentWillReceiveProps() {
-    if (!this.state.loaded)
-      this.loaded()
+    if (!this.state.loaded) this.loaded();
   }
 
   loaded = () => {
@@ -24,12 +20,12 @@ class FetchUser extends Component {
   }
 
   render() {
-    return this.state.loaded ? this.props.children : null
+    return this.state.loaded ? this.props.children : null;
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return { isAuthenticated: state.user.id };
-}
+};
 
 export default connect(mapStateToProps)(FetchUser);

@@ -6,30 +6,27 @@ import { handleLogin } from '../actions/auth';
 class Login extends Component {
   state = { email: '', password: '' };
 
-  handleChange = (e) => {
-    const { id , value } = e.target;
+  handleChange = event => {
+    const { id, value } = event.target;
     this.setState({ [id]: value });
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  handleSubmit = event => {
+    event.preventDefault();
     const { dispatch, history } = this.props;
     const { email, password } = this.state;
-
     dispatch(handleLogin(email, password, history));
   }
 
   render() {
     const { email, password } = this.state;
-
-    return(
+    return (
       <Segment basic>
         <Header as='h1' textAlign='center'>Login</Header>
         <Form onSubmit={this.handleSubmit}>
           <Form.Field>
-            <label>Email</label>
+            <label htmlFor='email'>Email</label>
             <input
-              autoFocus
               required
               id='email'
               value={email}
@@ -38,7 +35,7 @@ class Login extends Component {
             />
           </Form.Field>
           <Form.Field>
-            <label>Password</label>
+            <label htmlFor='password'>Password</label>
             <input
               required
               id='password'
