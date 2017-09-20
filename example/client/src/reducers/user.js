@@ -1,12 +1,12 @@
-const user = (state = {}, action ) => {
-  switch(action.type) {
+const user = (state = {}, action) => {
+  switch (action.type) {
     case 'LOGIN':
-      return { ...action.user }
+      return { ...action.user };
     case 'LOGOUT':
-      return {}
+      return {};
     default:
       return state;
   }
-}
+};
 
 export default user;
