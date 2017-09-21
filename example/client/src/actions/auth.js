@@ -80,6 +80,7 @@ export const validateToken = (callBack = () => {}) => {
       .then(res => {
         const user = res.data.data;
         dispatch(login(user));
+        dispatch(setHeaders(res.headers));
       })
       .catch(() => callBack());
   };
