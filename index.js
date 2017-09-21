@@ -16,17 +16,16 @@ let full = false;
 
 const initialPrompt = () => {
   clear();
-  console.log(
-    chalk.bold.cyan( '(create-repack-app) => ' )
-  );
+  console.log(chalk.bold.cyan('Welcome To Create Repack App.'));
+  console.log()
 
   dest = argv._[0];
   full = argv.full;
 
   if (!dest) {
-    console.log(chalk.bold.red('\nrepack <project> no project name specified'))
+    console.log(chalk.bold.red('\nrepack <project> no project name specified!'))
   } else if (files.directoryExists(`${cwd}/${dest}`)) {
-    console.log(chalk.bold.red('\nA directory already exists with the name given'))
+    console.log(chalk.bold.red('\nA directory already exists with the name given!'))
   } else {
     checkRailsVersions();
   }
@@ -53,9 +52,8 @@ const checkRailsVersions = () => {
           {
             type: 'list',
             name: 'cra',
-            message: 'Do you have create react app installed and globally available?',
+            message: 'Do you have create-react-app installed and globally available?',
             choices: ['Yes', 'No']
-
           }
         ]
       ).then( (answer) => {
@@ -63,7 +61,7 @@ const checkRailsVersions = () => {
         if (answer.cra === 'Yes') {
           installApps()
         } else {
-          console.log('Please instal create-react-app run:') 
+          console.log('Please install create-react-app run:')
           console.log(`${chalk.cyan('npm install -g create-react-app')} or ${chalk.cyan('yarn global add create-react-app')}`)
 
         }
@@ -77,7 +75,7 @@ const checkRailsVersions = () => {
 const portPrompt = () => {
   inquirer.prompt(
     [
-      { 
+      {
         type: 'input',
         name: 'port',
         message: 'Rails server port',
@@ -86,7 +84,7 @@ const portPrompt = () => {
     ]
   ).then( answer => {
     if (answer.port === '3000') {
-      console.log(chalk.yellow('PORT 3000 is the default PORT for create-react-app.  We reccomend using a different PORT.'))  
+      console.log(chalk.yellow('PORT 3000 is the default PORT for create-react-app. We recommend using a different PORT.'))
       inquirer.prompt(
         [
           {
@@ -114,37 +112,29 @@ const portPrompt = () => {
 
 const checkOptions = (port) => {
   if (full) {
+    console.log()
+    console.log('Performing A Full Install. (Rails, React, React Router, Redux, Devise, Devise Token Auth, Authentication Components)')
+    console.log()
+    console.log(chalk.cyan('Please Wait, This Could Take A Few Minutes...'))
+    console.log()
     const Gemfile = `${dest}/Gemfile`;
     let data = fs.readFileSync(Gemfile).toString().split("\n");
     const index = data.findIndex( line => line === "group :development, :test do" )
     const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
     data.splice(index, 0, gems);
     fs.writeFile(Gemfile, data.join("\n"))
-    exec('bundle', (error, stdout, stderr) => {
-      inquirer.prompt(
-        [
-          {
-             type: 'input',
-             name: 'choice',
-             message: 'What is your Devise Model',
-             default: 'User'
-          }
-        ]
-      ).then( (answer) => {
-        exec(`cd ${dest} && spring stop && bundle exec rake db:create && bundle exec rails g devise_token_auth:install ${answer.choice} api/auth && bundle exec rake db:migrate`, (err, stdout, stderr) => { 
-          if (err) 
-            console.log('ERR ' + err);
-          const Model = `${cwd}/${dest}/app/models/${answer.choice.toLowerCase()}.rb`;
-          let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
-          fs.writeFile(Model, data)
-          const config = `${cwd}/${dest}/config/environments/development.rb`
-          let configData = fs.readFileSync(config).toString().split("\n")
-          configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
-          fs.writeFile(config, configData.join("\n"))
-          fin(port) 
-        });
-      })
-    })
+    exec(`cd ${dest} && spring stop && bundle exec rails db:drop db:create && bundle && bundle exec rails g devise_token_auth:install User api/auth && bundle exec rails db:migrate`, (err, stdout, stderr) => {
+      if (err)
+        console.log('ERR ' + err);
+      const Model = `${cwd}/${dest}/app/models/user.rb`;
+      let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
+      fs.writeFile(Model, data)
+      const config = `${cwd}/${dest}/config/environments/development.rb`
+      let configData = fs.readFileSync(config).toString().split("\n")
+      configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
+      fs.writeFile(config, configData.join("\n"))
+      fin(port)
+    });
 
     let cmd = `cd ${dest}/client && yarn add redux redux-thunk react-redux react-router-dom axios redux-devise-axios semantic-ui-react semantic-ui-css`
 
@@ -165,15 +155,15 @@ const checkOptions = (port) => {
 }
 
 const updateClientPackage = (port) => {
-  console.log('Updating client/package.json with proxy');
+  console.log();
   const file = `${dest}/client/package.json`
   let obj = JSON.parse(fs.readFileSync(file, 'utf8'));
   obj.proxy = `http://localhost:${3001}`
-    const data = JSON.stringify(obj, null, 2); 
+    const data = JSON.stringify(obj, null, 2);
   fs.truncate(file, 0, () => {
     fs.writeFile(file, data, (err) => {
       if (err) {
-        return console.log("An error occured");
+        return console.log("An error occurred");
       }
     });
   });
@@ -181,11 +171,12 @@ const updateClientPackage = (port) => {
 
 const installApps = () => {
   console.log();
-  console.log('Installing Server...')
+  console.log('Writing Server Code...')
   const cmd = `rails new -T -d postgresql --api ${dest}`
-  console.log('Installing Client...')
+  console.log('Writing Client Code...')
   console.log()
-  console.log(chalk.cyan('This part takes a few minutes and a loading bar would actually slow that down. Please Wait.')) 
+  console.log(chalk.cyan('Please Wait, This Could Take A Few Minutes...'))
+  console.log()
 
   exec(cmd, (error, stdout, stderr) => {
     if (!error) {
@@ -202,10 +193,6 @@ const installApps = () => {
 }
 
 const copyStart = () => {
-  let message = `Building ${dest}`
-  console.log()
-  console.log(chalk.bold.green(message))
-  console.log(chalk.bold.yellow('Installing project base'))
   try {
     fs.copySync(__dirname + '/example/package', `${cwd}/${dest}`)
   } catch (err) {
@@ -231,9 +218,7 @@ const copyConfig = () => {
 
 const fin = (port) => {
   console.log();
-  console.log(`👍   👍   👍   👍 `);
-  console.log();
-  console.log(chalk.bold.green('Success'))
+  console.log(chalk.bold.green('Project Built Successfully!'))
   console.log()
   console.log(chalk.bold.cyan('GETTING STARTED:'))
   console.log(chalk.bold.white(`cd ${dest}`))
@@ -251,6 +236,7 @@ const fin = (port) => {
   console.log();
   console.log(chalk.bold.white('If not deploying to heroku:'))
   console.log(chalk.bold.white(`From root folder: yarn build && yarn deploy`))
+  console.log();
 }
 
 initialPrompt();
