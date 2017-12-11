@@ -25,8 +25,8 @@ export const registerUser = (email, password, passwordConfirmation, history) => 
           res.response.data.errors.full_messages.map(message =>
             <div>{message}</div>);
         const { headers } = res;
-        dispatch(setFlash(messages, 'red'));
         dispatch(setHeaders(headers));
+        dispatch(setFlash(messages, 'red'));
       });
   };
 };
@@ -36,9 +36,9 @@ export const handleLogout = history => {
     axios.delete('/api/auth/sign_out')
       .then(res => {
         const { headers } = res;
+        dispatch(setHeaders(headers));
         dispatch(logout());
         dispatch(setFlash('Logged out successfully!', 'green'));
-        dispatch(setHeaders(headers));
         history.push('/login');
       })
       .catch(res => {
@@ -46,8 +46,8 @@ export const handleLogout = history => {
           res.response.data.errors.map(message =>
             <div>{message}</div>);
         const { headers } = res;
-        dispatch(setFlash(messages, 'red'));
         dispatch(setHeaders(headers));
+        dispatch(setFlash(messages, 'red'));
       });
   };
 };
@@ -57,8 +57,8 @@ export const handleLogin = (email, password, history) => {
     axios.post('/api/auth/sign_in', { email, password })
       .then(res => {
         const { data: { data: user }, headers } = res;
-        dispatch(login(user));
         dispatch(setHeaders(headers));
+        dispatch(login(user));
         history.push('/');
       })
       .catch(res => {
@@ -66,8 +66,8 @@ export const handleLogin = (email, password, history) => {
           res.response.data.errors.map(message =>
             <div>{message}</div>);
         const { headers } = res;
-        dispatch(setFlash(messages, 'red'));
         dispatch(setHeaders(headers));
+        dispatch(setFlash(messages, 'red'));
       });
   };
 };
@@ -79,8 +79,8 @@ export const validateToken = (callBack = () => {}) => {
     axios.get('/api/auth/validate_token', headers)
       .then(res => {
         const user = res.data.data;
-        dispatch(login(user));
         dispatch(setHeaders(res.headers));
+        dispatch(login(user));
       })
       .catch(() => callBack());
   };
