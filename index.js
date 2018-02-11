@@ -41,10 +41,14 @@ const checkRailsVersions = () => {
   const cmd = 'gem list ^rails$'
   exec(cmd, (error, stdout, stderr) => {
     let match = false;
-    stdout.split("(")[1].split(',').forEach( e => {
-      if (/^([5-9]{1})|([0-9]{2,})/.test(parseFloat(e)))
-      match = true;
-    });
+    try {
+      stdout.split("(")[1].split(',').forEach( e => {
+        if (/^([5-9]{1})|([0-9]{2,})/.test(parseFloat(e)))
+        match = true;
+      });
+    } catch(err) {
+      console.log('ERR: It looks like Rails is not installed: `gem install rails`')
+    }
 
     if (match) {
       inquirer.prompt(
