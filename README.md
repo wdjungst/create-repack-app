@@ -22,22 +22,20 @@
 
   ### Reusable components
   * You will find some reusable components in client/components
-   #### ProtectedRoute
-    ProtectedRoute will allow you to redirect unauthorized users to the login page.
+  #### ProtectedRoute
+  ProtectedRoute will allow you to redirect unauthorized users to the login page.
 
-    ```
-    <ProtectedRoute exact path='/hello' component={Hello} />
-    ```
+  ```javascript
+  <ProtectedRoute exact path='/hello' component={Hello} />
+  ```
+If the users are logged in, will redirect them to the Hello example
 
-    If the users are logged in, will redirect them to the Hello example
-
-    #### AuthRoute
-     AuthRoute are used to prevent the authorized users hit the login or register route again if the are already logged.
-
-     ```
-       <AuthRoute exact path='/register' component={Register} />
-     ```
-     If the users are logged in, will redirect them to the homepage.
+  #### AuthRoute
+  AuthRoute are used to prevent the authorized users hit the login or register route again if the are already logged.
+  ```javascript
+  <AuthRoute exact path='/register' component={Register} />
+  ```
+ If the users are logged in, will redirect them to the homepage.
 
 
 
