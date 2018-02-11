@@ -10,7 +10,7 @@ const fs          = require('fs-extra');
 const files       = require('./lib/files');
 const argv        = require('minimist')(process.argv.slice(2));
 const cwd = files.getCurrentDirectoryBase()
-const exec = require('child_process').exec;
+const { spawn, exec } = require('child_process');
 let dest;
 let full = false;
 
@@ -123,7 +123,7 @@ const checkOptions = (port) => {
     const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
     data.splice(index, 0, gems);
     fs.writeFile(Gemfile, data.join("\n"))
-    exec(`cd ${dest} && spring stop && bundle exec rails db:drop db:create && bundle && bundle exec rails g devise_token_auth:install User api/auth && bundle exec rails db:migrate`, (err, stdout, stderr) => {
+    spawn(`cd ${dest} && spring stop && bundle exec rails db:drop db:create && bundle && bundle exec rails g devise_token_auth:install User api/auth && bundle exec rails db:migrate`, { stdio: 'inherit', shell: true }, (err, stdout, stderr) => {
       if (err)
         console.log('ERR ' + err);
       const Model = `${cwd}/${dest}/app/models/user.rb`;
