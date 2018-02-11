@@ -1,6 +1,5 @@
 # The Rules
 
-
  * You must use Rails 5+ as it uses the --api flag
  * You must have create-react-app installed globally
  * If things are broken first check to make sure dependencies are up to date
@@ -82,10 +81,10 @@
 # Known issues
   If Nokogiri updates this CLI will fail.  The reason why is because it times out on the bundle install and moves on to the next command.
   To fix this you can do the following:
-  1.  cd <app you created>
+  1.  cd app/you/created
   2.  bundle
   3.  cd ..
-  4.  rm -rf <app you created>
-  5.  create-repack-app <app you just deleted>
+  4.  rm -rf app/you/created
+  5.  create-repack-app app/you/created
   
   I am looking into many solutions and I am open to ideas.  
