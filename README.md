@@ -78,3 +78,14 @@
  Finally it adds a proxy to client/package.json
 
   Oh yeah and the name is totally ripped off
+
+# Known issues
+  If Nokogiri updates this CLI will fail.  The reason why is because it times out on the bundle install and moves on to the next command.
+  To fix this you can do the following:
+  1.  cd <app you created>
+  2.  bundle
+  3.  cd ..
+  4.  rm -rf <app you created>
+  5.  create-repack-app <app you just deleted>
+  
+  I am looking into many solutions and I am open to ideas.  
