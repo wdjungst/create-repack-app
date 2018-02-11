@@ -14,6 +14,8 @@ const { spawn, exec } = require('child_process');
 let dest;
 let full = false;
 
+const and = process.platform === 'win32' ? '-and' : '&&'
+
 const initialPrompt = () => {
   clear();
   console.log(chalk.bold.cyan('Welcome To Create Repack App.'));
@@ -127,7 +129,7 @@ const checkOptions = (port) => {
     const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
     data.splice(index, 0, gems);
     fs.writeFile(Gemfile, data.join("\n"))
-    spawn(`cd ${dest} && spring stop && bundle exec rails db:drop db:create && bundle && bundle exec rails g devise_token_auth:install User api/auth && bundle exec rails db:migrate`, { stdio: 'inherit', shell: true }, (err, stdout, stderr) => {
+    spawn(`cd ${dest} ${and} spring stop ${and} bundle exec rails db:drop db:create ${and} bundle ${and} bundle exec rails g devise_token_auth:install User api/auth ${and} bundle exec rails db:migrate`, { stdio: 'inherit', shell: true }, (err, stdout, stderr) => {
       if (err)
         console.log('ERR ' + err);
       const Model = `${cwd}/${dest}/app/models/user.rb`;
@@ -140,7 +142,7 @@ const checkOptions = (port) => {
       fin(port)
     });
 
-    let cmd = `cd ${dest}/client && yarn add redux redux-thunk react-redux react-router-dom axios redux-devise-axios semantic-ui-react semantic-ui-css`
+    let cmd = `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios redux-devise-axios semantic-ui-react semantic-ui-css`
 
     exec(cmd, () => {
       let from = `/example/client/`
@@ -152,7 +154,7 @@ const checkOptions = (port) => {
       }
     })
 
-    exec(`cd ${dest}/client/src && rm -rf App.* *.css *.svg`)
+    exec(`cd ${dest}/client/src ${and} rm -rf App.* *.css *.svg`)
   } else {
     fin(port)
   }
@@ -184,7 +186,7 @@ const installApps = () => {
 
   exec(cmd, (error, stdout, stderr) => {
     if (!error) {
-      const cmd = `cd ${dest} && create-react-app client`
+      const cmd = `cd ${dest} ${and} create-react-app client`
 
       exec(cmd, (error, stdout, stderr) => {
         installRailsDeps()
