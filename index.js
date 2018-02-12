@@ -116,6 +116,15 @@ const portPrompt = () => {
   });
 }
 
+const prCmd = (cmd) => {
+  return new Promise( (res, rej) => {
+    const child = spawn(cmd, { stdio: 'inherit', shell: true })
+    child.on('close', (code) => {
+      res(code);
+    });
+  })
+}
+
 const checkOptions = (port) => {
   if (full) {
     console.log()
@@ -129,18 +138,18 @@ const checkOptions = (port) => {
     const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
     data.splice(index, 0, gems);
     fs.writeFile(Gemfile, data.join("\n"))
-    spawn(`cd ${dest} ${and} spring stop ${and} bundle exec rails db:drop db:create ${and} bundle ${and} bundle exec rails g devise_token_auth:install User api/auth ${and} bundle exec rails db:migrate`, { stdio: 'inherit', shell: true }, (err, stdout, stderr) => {
-      if (err)
-        console.log('ERR ' + err);
-      const Model = `${cwd}/${dest}/app/models/user.rb`;
-      let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
-      fs.writeFile(Model, data)
-      const config = `${cwd}/${dest}/config/environments/development.rb`
-      let configData = fs.readFileSync(config).toString().split("\n")
-      configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
-      fs.writeFile(config, configData.join("\n"))
-      fin(port)
-    });
+    prCmd(`cd ${dest} ${and} spring stop ${and} bundle exec rails db:drop db:create ${and} bundle ${and} bundle exec rails g devise_token_auth:install User api/auth ${and} bundle exec rails db:migrate`)
+      .then( res => {
+        const Model = `${cwd}/${dest}/app/models/user.rb`;
+        let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
+        fs.writeFile(Model, data)
+        const config = `${cwd}/${dest}/config/environments/development.rb`
+        let configData = fs.readFileSync(config).toString().split("\n")
+        configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
+        fs.writeFile(config, configData.join("\n"))
+        fin(port)
+      })
+      .catch( err => console.log(`ERR: ${err}`) )
 
     let cmd = `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios redux-devise-axios semantic-ui-react semantic-ui-css`
 
