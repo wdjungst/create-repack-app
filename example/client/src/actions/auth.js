@@ -16,8 +16,8 @@ export const registerUser = (email, password, passwordConfirmation, history) => 
     axios.post('/api/auth', { email, password, password_confirmation: passwordConfirmation })
       .then(res => {
         const { data: { data: user }, headers } = res;
-        dispatch(login(user));
         dispatch(setHeaders(headers));
+        dispatch(login(user));
         history.push('/');
       })
       .catch(res => {
