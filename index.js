@@ -13,6 +13,8 @@ const cwd = files.getCurrentDirectoryBase()
 const { spawn, exec } = require('child_process');
 let dest;
 let full = false;
+let defaultYes = false;
+const defaultRailsPort = 3001;
 
 const and = process.platform === 'win32' ? '-and' : '&&'
 
@@ -23,6 +25,7 @@ const initialPrompt = () => {
 
   dest = argv._[0];
   full = argv.full;
+  defaultYes = argv.y;
 
   if (!dest) {
     console.log(chalk.bold.red('\nrepack <project> no project name specified!'))
@@ -53,24 +56,27 @@ const checkRailsVersions = () => {
     }
 
     if (match) {
-      inquirer.prompt(
-        [
-          {
-            type: 'list',
-            name: 'cra',
-            message: 'Do you have create-react-app installed and globally available?',
-            choices: ['Yes', 'No']
+      if (defaultYes) {
+        installApps();
+      } else {
+        inquirer.prompt(
+          [
+            {
+              type: 'list',
+              name: 'cra',
+              message: 'Do you have create-react-app installed and globally available?',
+              choices: ['Yes', 'No']
+            }
+          ]
+        ).then( (answer) => {
+          if (answer.cra === 'Yes') {
+            installApps()
+          } else {
+            console.log('Please install create-react-app run:')
+            console.log(`${chalk.cyan('npm install -g create-react-app')} or ${chalk.cyan('yarn global add create-react-app')}`)
           }
-        ]
-      ).then( (answer) => {
-        if (answer.cra === 'Yes') {
-          installApps()
-        } else {
-          console.log('Please install create-react-app run:')
-          console.log(`${chalk.cyan('npm install -g create-react-app')} or ${chalk.cyan('yarn global add create-react-app')}`)
-
-        }
-      });
+        });
+      }
     } else {
       console.log('Rails v5 or higher required')
     }
@@ -78,41 +84,45 @@ const checkRailsVersions = () => {
 }
 
 const portPrompt = () => {
-  inquirer.prompt(
-    [
-      {
-        type: 'input',
-        name: 'port',
-        message: 'Rails server port',
-        default: '3001'
-      }
-    ]
-  ).then( answer => {
-    if (answer.port === '3000') {
-      console.log(chalk.yellow('PORT 3000 is the default PORT for create-react-app. We recommend using a different PORT.'))
-      inquirer.prompt(
-        [
-          {
-            type: 'list',
-            name: 'choice',
-            message: 'Do you still want to use PORT 3000 for your rails server?',
-            choices: ['Yes', 'No']
-
-          }
-        ]
-      ).then( (answer) => {
-        if (answer.choice === 'No')
-          portPrompt();
-        else {
-          checkOptions(answer.port)
-          updateClientPackage(answer.port)
+  if (defaultYes) {
+    checkOptions();
+    updateClientPackage();
+  } else {
+    inquirer.prompt(
+      [
+        {
+          type: 'input',
+          name: 'port',
+          message: 'Rails server port',
+          default: '3001'
         }
-      });
-    } else {
-      checkOptions(answer.port)
-      updateClientPackage(answer.port)
-    }
-  });
+      ]
+    ).then( answer => {
+      if (answer.port === '3000') {
+        console.log(chalk.yellow('PORT 3000 is the default PORT for create-react-app. We recommend using a different PORT.'))
+        inquirer.prompt(
+          [
+            {
+              type: 'list',
+              name: 'choice',
+              message: 'Do you still want to use PORT 3000 for your rails server?',
+              choices: ['Yes', 'No']
+
+            }
+          ]
+        ).then( (answer) => {
+          if (answer.choice === 'No')
+            portPrompt();
+          else {
+            checkOptions(answer.port)
+          }
+        });
+      } else {
+        checkOptions(answer.port)
+        updateClientPackage(answer.port)
+      }
+    });
+  }
 }
 
 const prCmd = (cmd) => {
@@ -124,7 +134,7 @@ const prCmd = (cmd) => {
   })
 }
 
-const checkOptions = (port) => {
+const checkOptions = (port = defaultRailsPort) => {
   if (full) {
     console.log()
     console.log('Performing A Full Install. (Rails, React, React Router, Redux, Devise, Devise Token Auth, Authentication Components)')
@@ -168,7 +178,7 @@ const checkOptions = (port) => {
   }
 }
 
-const updateClientPackage = (port) => {
+const updateClientPackage = (port = defaultRailsPort) => {
   console.log();
   const file = `${dest}/client/package.json`
   let obj = JSON.parse(fs.readFileSync(file, 'utf8'));
