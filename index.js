@@ -63,7 +63,6 @@ const checkRailsVersions = () => {
           }
         ]
       ).then( (answer) => {
-        let cra = false;
         if (answer.cra === 'Yes') {
           installApps()
         } else {
@@ -173,7 +172,7 @@ const updateClientPackage = (port) => {
   console.log();
   const file = `${dest}/client/package.json`
   let obj = JSON.parse(fs.readFileSync(file, 'utf8'));
-  obj.proxy = `http://localhost:${3001}`
+  obj.proxy = `http://localhost:${port}`
     const data = JSON.stringify(obj, null, 2);
   fs.truncate(file, 0, () => {
     fs.writeFile(file, data, (err) => {
