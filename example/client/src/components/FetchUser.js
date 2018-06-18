@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { validateToken } from '../actions/auth';
+import { validateToken } from '../reducers/user';
 
 class FetchUser extends Component {
   state = { loaded: false };
@@ -11,7 +11,7 @@ class FetchUser extends Component {
     else dispatch(validateToken(this.loaded));
   }
 
-  componentWillReceiveProps() {
+  componentDidUpdate(prevProps, prevState) {
     if (!this.state.loaded) this.loaded();
   }
 

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 const AuthRoute = ({ isAuthenticated, component: Component, ...rest }) => (
   <Route
     {...rest}
-    render={props => (
+    render={ (props) => (
       !isAuthenticated
         ? (<Component {...props} />)
         : (

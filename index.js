@@ -118,8 +118,13 @@ const portPrompt = () => {
           }
         });
       } else {
-        checkOptions(answer.port)
-        updateClientPackage(answer.port)
+        if (parseInt(answer.port).toString() === answer.port) {
+          checkOptions(answer.port)
+          updateClientPackage(answer.port)
+        } else {
+          console.log(chalk.yellow('Invalid Port'))
+          portPrompt()
+        }
       }
     });
   }

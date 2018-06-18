@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Message, Container, Header } from 'semantic-ui-react';
-import { clearFlash } from '../actions/flash';
+import { clearFlash } from '../reducers/flash';
 import { withRouter } from 'react-router-dom';
 
 class Flash extends Component { 
