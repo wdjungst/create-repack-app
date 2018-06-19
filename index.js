@@ -152,6 +152,12 @@ const checkOptions = (port = defaultRailsPort) => {
     const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
     data.splice(index, 0, gems);
     fs.writeFile(Gemfile, data.join("\n"))
+    const ApplicationController = `${dest}/app/controllers/application_controller.rb`
+    const fileContent = fs.readFileSync(ApplicationController).toString().split("\n")
+    const line = "\tbefore_action :authenticate_user!, if: proc { request.controller_class.parent == Api }"
+    const lineIndex = 1
+    fileContent.splice(lineIndex, 0, line)
+    fs.writeFile(ApplicationController, fileContent.join("\n"))
     prCmd(`cd ${dest} ${and} spring stop ${and} bundle exec rails db:drop db:create ${and} bundle ${and} bundle exec rails g devise_token_auth:install User api/auth ${and} bundle exec rails db:migrate`)
       .then( res => {
         const Model = `${cwd}/${dest}/app/models/user.rb`;
