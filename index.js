@@ -154,7 +154,7 @@ const checkOptions = (port = defaultRailsPort) => {
     fs.writeFile(Gemfile, data.join("\n"))
     const ApplicationController = `${dest}/app/controllers/application_controller.rb`
     const fileContent = fs.readFileSync(ApplicationController).toString().split("\n")
-    const line = "\n\t#Remove comment after you create API controller(s)\n\t#before_action :authenticate_user!, if: proc { request.controller_class.parent == Api }"
+    const line = "\tbefore_action :authenticate_user!, if: proc {\n\t\tbegin\n\t\t\trequest.controller_class.parent == Api\n\t\trescue => NameError\n\t\t\tRails.logger.error(NameError.message)\n\t\t\tnil\n\t\tend\n  }"
     const lineIndex = 1
     fileContent.splice(lineIndex, 0, line)
     fs.writeFile(ApplicationController, fileContent.join("\n"))
