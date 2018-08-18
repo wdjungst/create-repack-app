@@ -18,7 +18,7 @@ class FetchUser extends Component {
             this.loaded()
           }).catch( () => this.loaded() )
       } else {
-        this.laoded()
+        this.loaded()
       }
     }
   }
