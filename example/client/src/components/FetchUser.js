@@ -11,16 +11,25 @@ class FetchUser extends Component {
     if (isAuthenticated) {
       this.loaded()
     } else {
-      axios.get('/api/auth/validate_token')
-        .then( res => {
-          dispatch(login(res.data.data))
-          this.loaded()
-        }).catch( () => this.loaded() )
+      if (this.checkLocalToken()) {
+        axios.get('/api/auth/validate_token')
+          .then( res => {
+            dispatch(login(res.data.data))
+            this.loaded()
+          }).catch( () => this.loaded() )
+      } else {
+        this.laoded()
+      }
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.loaded) this.loaded();
+  }
+
+  checkLocalToken = () => {
+    const token = localStorage.getItem('access-token')
+    return token
   }
 
   loaded = () => {
