@@ -84,7 +84,7 @@ This package is not complicated. It is really just a cli that runs other cli's.
 
 First it installs rails.
 
-Then it copies over a pefilled out config/routes and app/controllers/static_controller.rb as well as a package.json.
+Then it copies over a prefilled out config/routes and app/controllers/static_controller.rb as well as a package.json.
 
 Then it installs create-react-app to the client/ folder.
 
