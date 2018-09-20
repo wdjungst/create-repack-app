@@ -1,7 +1,7 @@
 {
   "name": "create-repack-app",
   "license": "ISC",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "A cli to create a rails / create-react-app application",
   "homepage": "https://github.com/wdjungst/create-repack-app",
   "author": "DevPoint Studios",
