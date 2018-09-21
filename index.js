@@ -158,7 +158,7 @@ const checkOptions = (port = defaultRailsPort) => {
     const Gemfile = `${dest}/Gemfile`;
     let data = fs.readFileSync(Gemfile).toString().split("\n");
     const index = data.findIndex( line => line === "group :development, :test do" )
-    const gems = ["gem 'omniauth'", "gem 'devise'", "gem 'devise_token_auth'"].join("\n");
+    const gems = ["gem 'omniauth'", "gem 'devise_token_auth'"].join("\n");
     data.splice(index, 0, gems);
     fs.writeFile(Gemfile, data.join("\n"))
     const ApplicationController = `${dest}/app/controllers/application_controller.rb`
