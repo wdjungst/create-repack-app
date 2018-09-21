@@ -171,7 +171,7 @@ const checkOptions = (port = defaultRailsPort) => {
       })
       .catch( err => console.log(`ERR: ${err}`) )
 
-    let cmd = `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios devise-axios@1.0.12 semantic-ui-react semantic-ui-css`
+    let cmd = `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios devise-axios semantic-ui-react semantic-ui-css`
 
     exec(cmd, () => {
       let from = `/example/client/`
