@@ -34,7 +34,7 @@ ${RENDER_ERROR}
 
 const perfRails = (dest, and) => `cd ${dest} ${and} spring stop ${and} bundle exec rails db:drop db:create ${and} bundle ${and} bundle exec rails g devise_token_auth:install User api/auth ${and} bundle exec rails db:migrate`
 
-const perfReact = (dest, and) => `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios devise-axios semantic-ui-react semantic-ui-css`
+const perfReact = (dest, and) => `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios devise-axios@1.0.12 semantic-ui-react semantic-ui-css`
 
 const removeExtras = (dest, and) => `cd ${dest}/client/src ${and} rm -rf App.* *.css *.svg`
 
