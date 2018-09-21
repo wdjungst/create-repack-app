@@ -10,6 +10,7 @@ const fs          = require('fs-extra');
 const files       = require('./lib/files');
 const argv        = require('minimist')(process.argv.slice(2));
 const cwd = files.getCurrentDirectoryBase()
+const commands = require('./utils/commands')
 const { spawn, exec } = require('child_process');
 let dest;
 let full = false;
@@ -17,6 +18,14 @@ let defaultYes = false;
 const defaultRailsPort = 3001;
 
 const and = process.platform === 'win32' ? '-and' : '&&'
+
+const { 
+  LIST_RAILS,
+  APP_CONTROLLER,
+  perfRails,
+  perfReact,
+  removeExtras,
+} = commands
 
 const initialPrompt = () => {
   clear();
@@ -43,7 +52,7 @@ const installRailsDeps = () => {
 }
 
 const checkRailsVersions = () => {
-  const cmd = 'gem list ^rails$'
+  const cmd = LIST_RAILS
   exec(cmd, (error, stdout, stderr) => {
     let match = false;
     try {
@@ -154,26 +163,10 @@ const checkOptions = (port = defaultRailsPort) => {
     fs.writeFile(Gemfile, data.join("\n"))
     const ApplicationController = `${dest}/app/controllers/application_controller.rb`
     const fileContent = fs.readFileSync(ApplicationController).toString().split("\n")
-    const render_error = `
-  private
-    def render_error(model, type = 'array', status = 422)
-      case type
-        when 'string'
-          errors = model.errors.full_messages.join(', ')
-        when 'array'
-          errors = model.errors.full_messages
-        else
-          errors = { errors: model.errors }
-      end
-  
-      render json: errors, status: status
-    end
-`
-    const line = "\tbefore_action :authenticate_user!, if: proc {\n\t\tbegin\n\t\t\trequest.controller_class.parent == Api\n\t\trescue => NameError\n\t\t\tRails.logger.error(NameError.message)\n\t\t\tnil\n\t\tend\n  }\n\n" + render_error
     const lineIndex = 1
-    fileContent.splice(lineIndex, 0, line)
+    fileContent.splice(lineIndex, 0, APP_CONTROLLER)
     fs.writeFile(ApplicationController, fileContent.join("\n"))
-    prCmd(`cd ${dest} ${and} spring stop ${and} bundle exec rails db:drop db:create ${and} bundle ${and} bundle exec rails g devise_token_auth:install User api/auth ${and} bundle exec rails db:migrate`)
+    prCmd(perfRails(dest, and))
       .then( res => {
         const Model = `${cwd}/${dest}/app/models/user.rb`;
         let data = fs.readFileSync(Model).toString().replace(" :confirmable,", "")
@@ -186,7 +179,7 @@ const checkOptions = (port = defaultRailsPort) => {
       })
       .catch( err => console.log(`ERR: ${err}`) )
 
-    let cmd = `cd ${dest}/client ${and} yarn add redux redux-thunk react-redux react-router-dom axios devise-axios semantic-ui-react semantic-ui-css`
+    let cmd = perfReact(dest, and)
 
     exec(cmd, () => {
       let from = `/example/client/`
@@ -198,7 +191,7 @@ const checkOptions = (port = defaultRailsPort) => {
       }
     })
 
-    exec(`cd ${dest}/client/src ${and} rm -rf App.* *.css *.svg`)
+    exec(removeExtras(dest, and))
   } else {
     fin(port)
   }
