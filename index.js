@@ -25,6 +25,7 @@ const {
   perfRails,
   perfReact,
   removeExtras,
+  apiController,
 } = commands
 
 const initialPrompt = () => {
@@ -154,6 +155,7 @@ const checkOptions = (port = defaultRailsPort) => {
     console.log()
     console.log(chalk.cyan('Please Wait, This Could Take A Few Minutes...'))
     console.log()
+    fs.copySync(__dirname + '/example/base/initializers', `${cwd}/${dest}/config/initializers/`)
     const Gemfile = `${dest}/Gemfile`;
     let data = fs.readFileSync(Gemfile).toString().split("\n");
     const index = data.findIndex( line => line === "group :development, :test do" )
@@ -189,6 +191,8 @@ const checkOptions = (port = defaultRailsPort) => {
         console.log(err)
       }
     })
+
+    prCmd(apiController(dest, and))
 
     exec(removeExtras(dest, and))
   } else {

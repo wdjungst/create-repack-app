@@ -38,10 +38,13 @@ const perfReact = (dest, and) => `cd ${dest}/client ${and} yarn add redux redux-
 
 const removeExtras = (dest, and) => `cd ${dest}/client/src ${and} rm -rf App.* *.css *.svg`
 
+const apiController = (dest, and) => `cd ${dest} ${and} rails g controller api/api`
+
 module.exports = {
   LIST_RAILS,
   APP_CONTROLLER,
   perfRails,
   perfReact,
   removeExtras,
+  apiController,
 }
