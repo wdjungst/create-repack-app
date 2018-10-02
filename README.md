@@ -19,6 +19,8 @@
 
 ## --full
 
+##### IMPORTANT: When using the full flag you must be on v 3.1.0 or higher due to changes in create-react-app 2.0.0
+
 You also have the option to add --full flag, this is going to add Devise to Rails, and add React-Router, Redux, Semantic-UI to React (/client)
 
 This flag includes a basic component set up for authentication with a nav bar, register page and login page.
