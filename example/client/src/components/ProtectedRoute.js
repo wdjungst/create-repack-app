@@ -11,7 +11,7 @@ const ProtectedRoute = ({ isAuthenticated, component: Component, ...rest }) => (
         : (
           <Redirect
             to={{
-              pathname: '/login',
+              pathname: "/login",
               state: { from: props.location }
             }}
           />)
@@ -24,3 +24,4 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(ProtectedRoute);
+

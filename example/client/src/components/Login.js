@@ -6,47 +6,48 @@ import { handleLogin } from '../reducers/user';
 class Login extends Component {
   state = { email: '', password: '' };
 
-  handleChange = event => {
-    const { id, value } = event.target;
-    this.setState({ [id]: value });
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
   }
 
-  handleSubmit = event => {
+  handleSubmit = (event) => {
     event.preventDefault();
     const { dispatch, history } = this.props;
-    const { email, password } = this.state;
-    dispatch(handleLogin({ email, password }, history));
+    dispatch(handleLogin(this.state, history));
   }
 
   render() {
     const { email, password } = this.state;
     return (
       <Segment basic>
-        <Header as='h1' textAlign='center'>Login</Header>
+        <Header as="h1" textAlign="center">Login</Header>
         <Form onSubmit={this.handleSubmit}>
           <Form.Field>
-            <label htmlFor='email'>Email</label>
+            <label htmlFor="email">Email</label>
             <input
               required
-              id='email'
+              id="email"
+              name="email"
               value={email}
-              placeholder='Email'
+              placeholder="Email"
               onChange={this.handleChange}
             />
           </Form.Field>
           <Form.Field>
-            <label htmlFor='password'>Password</label>
+            <label htmlFor="password">Password</label>
             <input
               required
-              id='password'
+              id="password"
+              name="password"
               value={password}
-              placeholder='Password'
-              type='password'
+              placeholder="Password"
+              type="password"
               onChange={this.handleChange}
             />
           </Form.Field>
-          <Segment textAlign='center' basic>
-            <Button primary type='submit'>Submit</Button>
+          <Segment textAlign="center" basic>
+            <Button primary type="submit">Submit</Button>
           </Segment>
         </Form>
       </Segment>
@@ -55,3 +56,4 @@ class Login extends Component {
 }
 
 export default connect()(Login);
+

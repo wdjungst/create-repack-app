@@ -11,7 +11,7 @@ const AuthRoute = ({ isAuthenticated, component: Component, ...rest }) => (
         : (
           <Redirect
             to={{
-              pathname: '/',
+              pathname: "/",
               state: { from: props.location }
             }}
           />)
@@ -24,3 +24,4 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(AuthRoute);
+

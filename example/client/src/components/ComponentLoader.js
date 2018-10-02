@@ -13,3 +13,4 @@ const ComponentLoader = ({ loaded, message, children }) => {
 }
 
 export default ComponentLoader;
+

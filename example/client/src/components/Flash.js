@@ -25,7 +25,7 @@ class Flash extends Component {
   fadeFlash = dispatch => {
     setTimeout(() => {
       dispatch(clearFlash());
-    }, 15000);
+    }, this.props.duration || 10000);
   }
 
   render() {
@@ -38,7 +38,7 @@ class Flash extends Component {
             onDismiss={() => dispatch(clearFlash())}
             color={color}
           >
-            <Header as='h5' textAlign='center'>{message}</Header>
+            <Header as="h5" textAlign="center">{message}</Header>
             {this.fadeFlash(dispatch)}
           </Message>
         </Container>
@@ -54,3 +54,4 @@ const mapStateToProps = state => {
 };
 
 export default withRouter(connect(mapStateToProps)(Flash));
+
