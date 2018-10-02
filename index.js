@@ -28,7 +28,6 @@ const {
 } = commands
 
 const initialPrompt = () => {
-  clear();
   console.log(chalk.bold.cyan('Welcome To Create Repack App.'));
   console.log()
 
@@ -173,7 +172,7 @@ const checkOptions = (port = defaultRailsPort) => {
         fs.writeFile(Model, data)
         const config = `${cwd}/${dest}/config/environments/development.rb`
         let configData = fs.readFileSync(config).toString().split("\n")
-        configData.splice(1, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
+        configData.splice(3, 0, `  config.action_mailer.default_url_options = { host: "localhost: ${port}" } `)
         fs.writeFile(config, configData.join("\n"))
         fin(port)
       })
@@ -254,6 +253,11 @@ const copyRootController = () => {
 const copyConfig = () => {
   try {
     fs.copySync(__dirname + '/example/base/config', `${cwd}/${dest}/config/`)
+    fs.copySync(__dirname + '/example/base/lib', `${cwd}/${dest}/lib/`)
+    const config = `${cwd}/${dest}/config/environments/development.rb`
+    let configData = fs.readFileSync(config).toString().split("\n")
+    configData.splice(0, 0, `require "#{Rails.root}/lib/listen"\ninclude Listen`)
+    fs.writeFile(config, configData.join("\n"))
   } catch (err) {
     console.error(err)
   }
