@@ -10,6 +10,7 @@ class Register extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { dispatch, history } = this.props;
+    const { password, passwordConfirmation } = this.state
     if (password === passwordConfirmation) {
       dispatch(registerUser(this.state, history));
     } else dispatch(setFlash('Passwords do not match!, please try again', 'red'));
