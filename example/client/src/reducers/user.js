@@ -15,17 +15,25 @@ const logout = () => {
 export const registerUser = (user, history) => {
   return (dispatch) => {
     axios.post('/api/auth', user)
-    .then( (res) => {
-      const { data: { data: user } } = res;
-      dispatch(login(user));
-      history.push('/')
-    })
-    .catch( res => {
-      const messages =
-        res.response.data.errors.full_messages.map(message =>
-          <div>{message}</div>);
+      .then((res) => {
+        const { data: { data: user } } = res;
+        dispatch(login(user));
+        history.push('/')
+      })
+      .catch(res => {
+        let messages = ''
+        const errors = res.response.data.errors
+        if (Array.isArray(errors)) {
+          messages = res.response.data.errors.map(message =>
+            <div>{message}</div>
+          )
+        } else {
+          messages = res.response.data.errors.full_messages.map(message =>
+            <div>{message}</div>
+          )
+        }
         dispatch(setFlash(messages, 'red'));
-    })
+      })
   }
 }
 
